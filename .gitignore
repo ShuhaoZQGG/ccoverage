@@ -1,0 +1,9 @@
+# Compiled binary
+ccoverage
+
+# Cross-compiled binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib

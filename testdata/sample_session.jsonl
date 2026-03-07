@@ -1,0 +1,8 @@
+{"type":"user","message":{"role":"user","content":"<command-name>/deploy</command-name>\nDeploy the app"},"cwd":"/Users/test/myproject","timestamp":"2025-12-01T10:00:00Z"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"call_1","name":"Skill","input":{"skill":"db-migration"}},{"type":"text","text":"Running migration..."}]},"cwd":"/Users/test/myproject","timestamp":"2025-12-01T10:01:00Z"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"call_2","name":"mcp__supabase__query","input":{"query":"SELECT 1"}}]},"cwd":"/Users/test/myproject","timestamp":"2025-12-01T10:02:00Z"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"call_3","name":"Agent","input":{"subagent_type":"code-reviewer"}}]},"cwd":"/Users/test/myproject","timestamp":"2025-12-01T10:03:00Z"}
+{"type":"progress","data":{"type":"hook_progress","hookEvent":"PreToolUse","hookName":"PreToolUse:Bash"},"cwd":"/Users/test/myproject","timestamp":"2025-12-01T10:04:00Z"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"call_read1","name":"Read","input":{"file_path":"/Users/test/myproject/src/api/handler.go"}}]},"cwd":"/Users/test/myproject","timestamp":"2025-12-01T10:05:00Z"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"call_edit1","name":"Edit","input":{"file_path":"/Users/test/myproject/src/api/routes.go","old_string":"old","new_string":"new"}}]},"cwd":"/Users/test/myproject","timestamp":"2025-12-01T10:06:00Z"}
+{"type":"assistant","message":{"role":"assistant","content":"The deployment is complete."},"cwd":"/Users/test/myproject","timestamp":"2025-12-01T10:07:00Z"}
