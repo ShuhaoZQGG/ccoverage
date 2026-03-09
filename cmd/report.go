@@ -19,6 +19,7 @@ var (
 	statusFilter      string
 	typeFilter        string
 	errorOnMatch      bool
+	lastSession       bool
 )
 
 var reportCmd = &cobra.Command{
@@ -33,6 +34,7 @@ func init() {
 	reportCmd.Flags().StringVar(&statusFilter, "status", "", "Comma-separated statuses to include (Active,Underused,Dormant,Orphaned)")
 	reportCmd.Flags().StringVar(&typeFilter, "type", "", "Comma-separated config types to include (CLAUDE.md,Skill,MCP,Hook,Command)")
 	reportCmd.Flags().BoolVar(&errorOnMatch, "error-on-match", false, "Exit with code 1 if any results remain after filtering")
+	reportCmd.Flags().BoolVar(&lastSession, "last-session", false, "Include per-item hit/miss for the most recent session")
 	rootCmd.AddCommand(reportCmd)
 }
 
@@ -49,6 +51,7 @@ func runReport(cmd *cobra.Command, args []string) error {
 
 	if len(manifest.Items) == 0 {
 		fmt.Fprintln(os.Stderr, "No Claude Code configuration found in this repository.")
+		fmt.Fprintln(os.Stderr, "  Looked for: CLAUDE.md files, .claude/skills/, .mcp.json, .claude/settings.json hooks, .claude/commands/")
 		return nil
 	}
 
@@ -62,8 +65,24 @@ func runReport(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("analyze: %w", err)
 	}
 
+	if lastSession {
+		latestFile, lsErr := usage.LatestSessionFile(absPath)
+		if lsErr != nil {
+			return fmt.Errorf("locate latest session: %w", lsErr)
+		}
+		if latestFile != "" {
+			lsReport, lsErr := usage.MatchSingleSession(manifest, latestFile)
+			if lsErr != nil {
+				return fmt.Errorf("match last session: %w", lsErr)
+			}
+			report.LastSession = lsReport
+		}
+	}
+
 	if len(sessionFiles) == 0 {
 		fmt.Fprintln(os.Stderr, "No session data found. All items shown as Dormant.")
+		fmt.Fprintf(os.Stderr, "  Looked in: ~/.claude/projects/%s/\n", usage.EncodeRepoPath(absPath))
+		fmt.Fprintf(os.Stderr, "  (No Claude Code sessions found for this repo in the last %d days.)\n", lookbackDays)
 	}
 
 	report = filterReport(report, statusFilter, typeFilter)
