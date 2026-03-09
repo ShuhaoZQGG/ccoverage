@@ -293,13 +293,27 @@ func parseUserLine(raw rawLine, sessionID string, ts time.Time) []types.UsageEve
 		if len(m) < 2 || m[1] == "" {
 			continue
 		}
+		name := m[1]
 		events = append(events, types.UsageEvent{
 			ConfigType: types.ConfigCommand,
-			Name:       m[1],
+			Name:       name,
 			SessionID:  sessionID,
 			Timestamp:  ts,
 			Cwd:        raw.Cwd,
 		})
+		// Also emit as ConfigSkill with the slash stripped, because
+		// skills invoked via slash command are logged with <command-name>
+		// tags but registered in the manifest as ConfigSkill.
+		skillName := strings.TrimPrefix(name, "/")
+		if skillName != name && skillName != "" {
+			events = append(events, types.UsageEvent{
+				ConfigType: types.ConfigSkill,
+				Name:       skillName,
+				SessionID:  sessionID,
+				Timestamp:  ts,
+				Cwd:        raw.Cwd,
+			})
+		}
 	}
 	return events
 }

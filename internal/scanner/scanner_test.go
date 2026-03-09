@@ -6,7 +6,16 @@ import (
 	"testing"
 )
 
+func isolateHomeDir(t *testing.T) {
+	t.Helper()
+	fakeHome := t.TempDir()
+	orig := userHomeDirFunc
+	userHomeDirFunc = func() (string, error) { return fakeHome, nil }
+	t.Cleanup(func() { userHomeDirFunc = orig })
+}
+
 func TestBuildManifest_EmptyRepo(t *testing.T) {
+	isolateHomeDir(t)
 	dir := t.TempDir()
 	manifest, err := BuildManifest(dir)
 	if err != nil {
@@ -18,6 +27,7 @@ func TestBuildManifest_EmptyRepo(t *testing.T) {
 }
 
 func TestBuildManifest_WithConfig(t *testing.T) {
+	isolateHomeDir(t)
 	dir := t.TempDir()
 
 	// Create CLAUDE.md

@@ -43,7 +43,7 @@ func scanHooks(repoPath string) ([]types.ManifestItem, error) {
 
 	var parsed settingsFile
 	if err := json.Unmarshal(data, &parsed); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid JSON in %s: %w", settingsPath, err)
 	}
 
 	if len(parsed.Hooks) == 0 {

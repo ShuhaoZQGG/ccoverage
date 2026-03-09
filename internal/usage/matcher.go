@@ -3,6 +3,7 @@ package usage
 import (
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -186,16 +187,108 @@ func MatchUsage(
 		s.TotalActivations += len(matchSessions)
 		s.UniqueSessions += len(matchSessions)
 		if !firstMatch.IsZero() {
-			if s.FirstSeen.IsZero() || firstMatch.Before(s.FirstSeen) {
-				s.FirstSeen = firstMatch
+			if s.FirstSeen == nil || firstMatch.Before(*s.FirstSeen) {
+				s.FirstSeen = &firstMatch
 			}
-			if lastMatch.After(s.LastSeen) {
-				s.LastSeen = lastMatch
+			if s.LastSeen == nil || lastMatch.After(*s.LastSeen) {
+				s.LastSeen = &lastMatch
 			}
 		}
 	}
 
 	return summaries, allCwds, nil
+}
+
+// MatchSingleSession parses sessionFile and reports, for each item in
+// manifest, whether it was active in that session.
+//
+// For Skill/MCP/Hook/Command items a match requires at least one UsageEvent
+// with the same ConfigType and Name.  For CLAUDE.md items the same
+// directory-containment logic used by MatchUsage applies: the item is active
+// when any cwd or touched directory in the session is at or beneath the
+// directory that contains the CLAUDE.md file.
+//
+// Returns (nil, nil) when sessionFile is empty.
+func MatchSingleSession(manifest *types.Manifest, sessionFile string) (*types.LastSessionReport, error) {
+	if sessionFile == "" {
+		return nil, nil
+	}
+
+	events, cwds, touchedDirs, err := ParseSessionFile(sessionFile)
+	if err != nil {
+		return nil, fmt.Errorf("usage: parse session file: %w", err)
+	}
+
+	sessionID := sessionIDFromPath(sessionFile)
+
+	// Determine the session timestamp from the file's mtime.
+	var sessionTime time.Time
+	if info, statErr := os.Stat(sessionFile); statErr == nil {
+		sessionTime = info.ModTime()
+	}
+
+	// Build sets for O(1) lookups.
+	type eventKey struct {
+		ct   types.ConfigType
+		name string
+	}
+	activeKeys := make(map[eventKey]int, len(events))
+	for _, e := range events {
+		activeKeys[eventKey{e.ConfigType, e.Name}]++
+	}
+
+	cwdSet := make(map[string]struct{}, len(cwds))
+	for _, c := range cwds {
+		cwdSet[c] = struct{}{}
+	}
+
+	touchedDirSet := make(map[string]struct{}, len(touchedDirs))
+	for _, d := range touchedDirs {
+		touchedDirSet[d] = struct{}{}
+	}
+
+	items := make([]types.LastSessionItem, 0, len(manifest.Items))
+	for _, item := range manifest.Items {
+		var active bool
+		var count int
+
+		if item.Type == types.ConfigClaudeMD {
+			claudeDir := filepath.Dir(item.AbsPath)
+			for cwd := range cwdSet {
+				if isDirOrDescendant(cwd, claudeDir) {
+					active = true
+					break
+				}
+			}
+			if !active {
+				for dir := range touchedDirSet {
+					if isDirOrDescendant(dir, claudeDir) {
+						active = true
+						break
+					}
+				}
+			}
+			if active {
+				count = 1
+			}
+		} else {
+			count = activeKeys[eventKey{item.Type, item.Name}]
+			active = count > 0
+		}
+
+		items = append(items, types.LastSessionItem{
+			Type:   item.Type,
+			Name:   item.Name,
+			Active: active,
+			Count:  count,
+		})
+	}
+
+	return &types.LastSessionReport{
+		SessionID: sessionID,
+		Timestamp: sessionTime,
+		Items:     items,
+	}, nil
 }
 
 // ---------------------------------------------------------------------------
@@ -215,11 +308,11 @@ func updateTimeRange(s *types.UsageSummary, t time.Time) {
 	if t.IsZero() {
 		return
 	}
-	if s.FirstSeen.IsZero() || t.Before(s.FirstSeen) {
-		s.FirstSeen = t
+	if s.FirstSeen == nil || t.Before(*s.FirstSeen) {
+		s.FirstSeen = &t
 	}
-	if t.After(s.LastSeen) {
-		s.LastSeen = t
+	if s.LastSeen == nil || t.After(*s.LastSeen) {
+		s.LastSeen = &t
 	}
 }
 

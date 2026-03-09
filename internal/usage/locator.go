@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// encodeRepoPath converts an absolute repository path into the encoded form
+// EncodeRepoPath converts an absolute repository path into the encoded form
 // that Claude uses when naming project directories.
 //
 // The encoding replaces every "/" separator with "-" and strips the leading
@@ -19,7 +19,7 @@ import (
 // Example:
 //
 //	/Users/foo/project  →  Users-foo-project
-func encodeRepoPath(repoPath string) string {
+func EncodeRepoPath(repoPath string) string {
 	return strings.ReplaceAll(repoPath, "/", "-")
 }
 
@@ -39,7 +39,7 @@ func LocateSessionFiles(repoPath string, lookbackDays int) ([]string, error) {
 		return nil, fmt.Errorf("usage: resolve home directory: %w", err)
 	}
 
-	encoded := encodeRepoPath(repoPath)
+	encoded := EncodeRepoPath(repoPath)
 	projectDir := filepath.Join(homeDir, ".claude", "projects", encoded)
 
 	cutoff := time.Now().AddDate(0, 0, -lookbackDays)
@@ -74,4 +74,47 @@ func LocateSessionFiles(repoPath string, lookbackDays int) ([]string, error) {
 	}
 
 	return files, nil
+}
+
+// LatestSessionFile returns the absolute path of the single newest JSONL
+// session file for repoPath, based on file modification time.  It searches
+// the same locations as LocateSessionFiles but applies no date cutoff.
+// Returns ("", nil) when no files are found.
+func LatestSessionFile(repoPath string) (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("usage: resolve home directory: %w", err)
+	}
+
+	encoded := EncodeRepoPath(repoPath)
+	projectDir := filepath.Join(homeDir, ".claude", "projects", encoded)
+
+	patterns := []string{
+		filepath.Join(projectDir, "*.jsonl"),
+		filepath.Join(projectDir, "*", "*.jsonl"),
+	}
+
+	var latest string
+	var latestTime time.Time
+
+	for _, pattern := range patterns {
+		matches, globErr := filepath.Glob(pattern)
+		if globErr != nil {
+			continue
+		}
+
+		for _, match := range matches {
+			info, statErr := os.Stat(match)
+			if statErr != nil {
+				continue
+			}
+
+			if info.ModTime().After(latestTime) {
+				latestTime = info.ModTime()
+				latest = match
+			}
+		}
+	}
+
+	return latest, nil
 }

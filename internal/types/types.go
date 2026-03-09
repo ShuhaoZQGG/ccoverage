@@ -39,8 +39,8 @@ type UsageEvent struct {
 type UsageSummary struct {
 	TotalActivations int       `json:"total_activations"`
 	UniqueSessions   int       `json:"unique_sessions"`
-	FirstSeen        time.Time `json:"first_seen,omitempty"`
-	LastSeen         time.Time `json:"last_seen,omitempty"`
+	FirstSeen        *time.Time `json:"first_seen,omitempty"`
+	LastSeen         *time.Time `json:"last_seen,omitempty"`
 }
 
 type Status string
@@ -58,12 +58,26 @@ type CoverageResult struct {
 	Status Status       `json:"status"`
 }
 
+type LastSessionItem struct {
+	Type   ConfigType `json:"type"`
+	Name   string     `json:"name"`
+	Active bool       `json:"active"`
+	Count  int        `json:"count"`
+}
+
+type LastSessionReport struct {
+	SessionID string            `json:"session_id"`
+	Timestamp time.Time         `json:"timestamp"`
+	Items     []LastSessionItem `json:"items"`
+}
+
 type CoverageReport struct {
-	RepoPath         string           `json:"repo_path"`
-	LookbackDays     int              `json:"lookback_days"`
-	SessionsAnalyzed int              `json:"sessions_analyzed"`
-	Results          []CoverageResult `json:"results"`
-	Summary          ReportSummary    `json:"summary"`
+	RepoPath         string             `json:"repo_path"`
+	LookbackDays     int                `json:"lookback_days"`
+	SessionsAnalyzed int                `json:"sessions_analyzed"`
+	Results          []CoverageResult   `json:"results"`
+	Summary          ReportSummary      `json:"summary"`
+	LastSession      *LastSessionReport `json:"last_session,omitempty"`
 }
 
 type ReportSummary struct {

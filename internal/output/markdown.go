@@ -22,7 +22,7 @@ func RenderMarkdown(report *types.CoverageReport, w io.Writer) {
 
 	for _, r := range report.Results {
 		lastSeen := "—"
-		if !r.Usage.LastSeen.IsZero() {
+		if r.Usage.LastSeen != nil {
 			lastSeen = r.Usage.LastSeen.Format("2006-01-02")
 		}
 
