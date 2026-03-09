@@ -22,7 +22,7 @@ class DashboardViewModel: ObservableObject {
 
     var debtCount: Int {
         guard let summary = currentRepo?.report?.summary else { return 0 }
-        return summary.dormant + summary.orphaned
+        return summary.dormant
     }
 
     var weekDelta: Int? {
@@ -45,7 +45,7 @@ class DashboardViewModel: ObservableObject {
                 group.addTask { [settings, reportRunner, debtTracker] in
                     do {
                         let report = try await reportRunner.runReport(repoPath: state.repoPath, settings: settings)
-                        let debt = report.summary.dormant + report.summary.orphaned
+                        let debt = report.summary.dormant
                         await MainActor.run {
                             state.report = report
                             state.error = nil

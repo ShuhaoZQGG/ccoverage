@@ -43,7 +43,7 @@ func RenderMarkdown(report *types.CoverageReport, w io.Writer) {
 	}
 
 	s := report.Summary
-	fmt.Fprintf(w, "\n**Total: %d | Active: %d | Underused: %d | Dormant: %d | Orphaned: %d**\n",
-		s.TotalItems, s.Active, s.Underused, s.Dormant, s.Orphaned,
+	fmt.Fprintf(w, "\n**Total: %d | Active: %d | Underused: %d | Dormant: %d**\n",
+		s.TotalItems, s.Active, s.Underused, s.Dormant,
 	)
 }

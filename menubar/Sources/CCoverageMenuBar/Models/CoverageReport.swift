@@ -29,7 +29,6 @@ struct ManifestItem: Codable {
     let path: String
     let absPath: String
     let lastModified: Date
-    let exists: Bool
     let metadata: [String: String]?
 
     var displayType: String {
@@ -43,7 +42,7 @@ struct ManifestItem: Codable {
         case type, name, path
         case absPath = "abs_path"
         case lastModified = "last_modified"
-        case exists, metadata
+        case metadata
     }
 }
 
@@ -66,11 +65,10 @@ struct ReportSummary: Codable {
     let active: Int
     let underused: Int
     let dormant: Int
-    let orphaned: Int
 
     enum CodingKeys: String, CodingKey {
         case totalItems = "total_items"
-        case active, underused, dormant, orphaned
+        case active, underused, dormant
     }
 }
 
@@ -134,7 +132,6 @@ struct SummaryDelta {
     let active: (old: Int, new: Int)
     let underused: (old: Int, new: Int)
     let dormant: (old: Int, new: Int)
-    let orphaned: (old: Int, new: Int)
 }
 
 enum ComparisonBuilder {
@@ -165,8 +162,7 @@ enum ComparisonBuilder {
         let delta = SummaryDelta(
             active: (baseline.summary.active, recent.summary.active),
             underused: (baseline.summary.underused, recent.summary.underused),
-            dormant: (baseline.summary.dormant, recent.summary.dormant),
-            orphaned: (baseline.summary.orphaned, recent.summary.orphaned)
+            dormant: (baseline.summary.dormant, recent.summary.dormant)
         )
 
         return ComparisonReport(recent: recent, baseline: baseline, recentDays: recentDays, baselineDays: baselineDays, items: items, summaryDelta: delta)

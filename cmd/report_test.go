@@ -13,7 +13,7 @@ func TestParseStatusFilter(t *testing.T) {
 	}{
 		{"", nil},
 		{"Active", map[types.Status]bool{types.StatusActive: true}},
-		{"dormant,orphaned", map[types.Status]bool{types.StatusDormant: true, types.StatusOrphaned: true}},
+		{"dormant", map[types.Status]bool{types.StatusDormant: true}},
 		{"UNDERUSED", map[types.Status]bool{types.StatusUnderused: true}},
 		{" Active , Dormant ", map[types.Status]bool{types.StatusActive: true, types.StatusDormant: true}},
 	}
@@ -79,10 +79,9 @@ func TestFilterReport(t *testing.T) {
 		Results: []types.CoverageResult{
 			{Item: types.ManifestItem{Type: types.ConfigMCP, Name: "supabase"}, Status: types.StatusActive},
 			{Item: types.ManifestItem{Type: types.ConfigSkill, Name: "deploy"}, Status: types.StatusDormant},
-			{Item: types.ManifestItem{Type: types.ConfigHook, Name: "lint"}, Status: types.StatusOrphaned},
 			{Item: types.ManifestItem{Type: types.ConfigClaudeMD, Name: "CLAUDE.md"}, Status: types.StatusActive},
 		},
-		Summary: types.ReportSummary{TotalItems: 4, Active: 2, Dormant: 1, Orphaned: 1},
+		Summary: types.ReportSummary{TotalItems: 3, Active: 2, Dormant: 1},
 	}
 
 	t.Run("no filters returns original", func(t *testing.T) {

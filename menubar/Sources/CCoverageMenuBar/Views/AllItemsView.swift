@@ -16,8 +16,7 @@ struct AllItemsView: View {
             totalItems: results.count,
             active: results.filter { $0.status == "Active" }.count,
             underused: results.filter { $0.status == "Underused" }.count,
-            dormant: results.filter { $0.status == "Dormant" }.count,
-            orphaned: results.filter { $0.status == "Orphaned" }.count
+            dormant: results.filter { $0.status == "Dormant" }.count
         )
     }
 
@@ -46,7 +45,7 @@ struct AllItemsView: View {
     }
 
     private var groupedResults: [(String, [CoverageResult])] {
-        let order = ["Active", "Underused", "Dormant", "Orphaned"]
+        let order = ["Active", "Underused", "Dormant"]
         let grouped = Dictionary(grouping: filteredResults) { $0.status }
         return order.compactMap { status in
             guard let items = grouped[status], !items.isEmpty else { return nil }
@@ -63,7 +62,6 @@ struct AllItemsView: View {
                 StatusBadge(label: "Active", count: summary.active, color: .green)
                 StatusBadge(label: "Underused", count: summary.underused, color: .yellow)
                 StatusBadge(label: "Dormant", count: summary.dormant, color: .red)
-                StatusBadge(label: "Orphaned", count: summary.orphaned, color: .purple)
             }
         }
     }
@@ -106,7 +104,6 @@ struct AllItemsView: View {
         case "Active": return .green
         case "Underused": return .yellow
         case "Dormant": return .red
-        case "Orphaned": return .purple
         default: return .gray
         }
     }

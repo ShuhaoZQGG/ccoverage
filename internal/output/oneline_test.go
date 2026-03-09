@@ -21,7 +21,7 @@ func TestRenderOneLine_AllHealthy(t *testing.T) {
 
 func TestRenderOneLine_NeedsAttention(t *testing.T) {
 	report := &types.CoverageReport{
-		Summary: types.ReportSummary{TotalItems: 10, Active: 7, Underused: 1, Dormant: 1, Orphaned: 1},
+		Summary: types.ReportSummary{TotalItems: 10, Active: 7, Underused: 1, Dormant: 2},
 	}
 	var buf bytes.Buffer
 	RenderOneLine(report, &buf)

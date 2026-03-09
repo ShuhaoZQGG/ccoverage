@@ -18,8 +18,7 @@ const (
 	ansiReset   = "\033[0m"
 	ansiGreen   = "\033[32m"
 	ansiYellow  = "\033[33m"
-	ansiRed     = "\033[31m"
-	ansiMagenta = "\033[35m"
+	ansiRed = "\033[31m"
 )
 
 // isTTY reports whether os.Stdout is connected to a terminal. ANSI colour
@@ -51,8 +50,6 @@ func statusColor(s types.Status) string {
 		return ansiYellow
 	case types.StatusDormant:
 		return ansiRed
-	case types.StatusOrphaned:
-		return ansiMagenta
 	}
 	return ""
 }
@@ -105,7 +102,7 @@ func RenderText(report *types.CoverageReport, w io.Writer) {
 	// Apply ANSI colours to status words at the start of each line.
 	output := buf.String()
 	if useColor {
-		for _, status := range []types.Status{types.StatusActive, types.StatusUnderused, types.StatusDormant, types.StatusOrphaned} {
+		for _, status := range []types.Status{types.StatusActive, types.StatusUnderused, types.StatusDormant} {
 			plain := string(status)
 			colored := colorize(plain, statusColor(status), true)
 			output = strings.ReplaceAll(output, "\n"+plain+" ", "\n"+colored+" ")
@@ -114,7 +111,7 @@ func RenderText(report *types.CoverageReport, w io.Writer) {
 	fmt.Fprint(w, output)
 
 	s := report.Summary
-	fmt.Fprintf(w, "\nTotal: %d | Active: %d | Underused: %d | Dormant: %d | Orphaned: %d\n",
-		s.TotalItems, s.Active, s.Underused, s.Dormant, s.Orphaned,
+	fmt.Fprintf(w, "\nTotal: %d | Active: %d | Underused: %d | Dormant: %d\n",
+		s.TotalItems, s.Active, s.Underused, s.Dormant,
 	)
 }

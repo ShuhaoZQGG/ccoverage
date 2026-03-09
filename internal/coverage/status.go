@@ -8,14 +8,10 @@ import "github.com/shuhaozhang/ccoverage/internal/types"
 // usage and the configured underuse threshold.
 //
 // Classification rules (evaluated in order):
-//  1. If the item does not exist on disk → StatusOrphaned
-//  2. If the item was never activated → StatusDormant
-//  3. If total activations are at or below threshold → StatusUnderused
-//  4. Otherwise → StatusActive
+//  1. If the item was never activated → StatusDormant
+//  2. If total activations are at or below threshold → StatusUnderused
+//  3. Otherwise → StatusActive
 func Classify(item types.ManifestItem, usage types.UsageSummary, threshold int) types.Status {
-	if !item.Exists {
-		return types.StatusOrphaned
-	}
 	if usage.TotalActivations == 0 {
 		return types.StatusDormant
 	}

@@ -81,7 +81,6 @@ struct CompareView: View {
             HStack(spacing: 10) {
                 deltaLabel("Active", delta: comparison.summaryDelta.active)
                 deltaLabel("Dormant", delta: comparison.summaryDelta.dormant)
-                deltaLabel("Orphaned", delta: comparison.summaryDelta.orphaned)
             }
         }
 

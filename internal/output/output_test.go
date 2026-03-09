@@ -16,12 +16,12 @@ func sampleReport() *types.CoverageReport {
 		SessionsAnalyzed: 10,
 		Results: []types.CoverageResult{
 			{
-				Item:   types.ManifestItem{Type: types.ConfigClaudeMD, Name: "CLAUDE.md", Exists: true},
+				Item:   types.ManifestItem{Type: types.ConfigClaudeMD, Name: "CLAUDE.md"},
 				Usage:  types.UsageSummary{TotalActivations: 10, UniqueSessions: 3},
 				Status: types.StatusActive,
 			},
 			{
-				Item:   types.ManifestItem{Type: types.ConfigSkill, Name: "db-migration", Exists: true},
+				Item:   types.ManifestItem{Type: types.ConfigSkill, Name: "db-migration"},
 				Usage:  types.UsageSummary{TotalActivations: 0},
 				Status: types.StatusDormant,
 			},

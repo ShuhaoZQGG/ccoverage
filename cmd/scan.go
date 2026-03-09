@@ -13,7 +13,7 @@ import (
 var scanCmd = &cobra.Command{
 	Use:   "scan",
 	Short: "Scan repository for Claude Code configuration items",
-	Long:  "Build a manifest of all Claude Code configuration (CLAUDE.md, skills, MCP servers, hooks, commands) found in the repository.",
+	Long:  "Build a manifest of all Claude Code configuration (CLAUDE.md, skills, MCP servers, hooks, commands, plugins) found in the repository.",
 	RunE:  runScan,
 }
 
@@ -47,16 +47,10 @@ func runScan(cmd *cobra.Command, args []string) error {
 	}
 
 	for i, item := range manifest.Items {
-		status := types.StatusDormant
-		if !item.Exists {
-			status = types.StatusOrphaned
-			report.Summary.Orphaned++
-		} else {
-			report.Summary.Dormant++
-		}
+		report.Summary.Dormant++
 		report.Results[i] = types.CoverageResult{
 			Item:   item,
-			Status: status,
+			Status: types.StatusDormant,
 		}
 	}
 

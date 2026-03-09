@@ -10,6 +10,7 @@ const (
 	ConfigMCP      ConfigType = "MCP"
 	ConfigHook     ConfigType = "Hook"
 	ConfigCommand  ConfigType = "Command"
+	ConfigPlugin   ConfigType = "Plugin"
 )
 
 type ManifestItem struct {
@@ -18,8 +19,7 @@ type ManifestItem struct {
 	Path         string            `json:"path"`
 	AbsPath      string            `json:"abs_path"`
 	LastModified time.Time         `json:"last_modified"`
-	Exists       bool              `json:"exists"`
-	Metadata     map[string]string `json:"metadata,omitempty"`
+	Metadata map[string]string `json:"metadata,omitempty"`
 }
 
 type Manifest struct {
@@ -49,7 +49,6 @@ const (
 	StatusActive    Status = "Active"
 	StatusUnderused Status = "Underused"
 	StatusDormant   Status = "Dormant"
-	StatusOrphaned  Status = "Orphaned"
 )
 
 type CoverageResult struct {
@@ -85,5 +84,4 @@ type ReportSummary struct {
 	Active     int `json:"active"`
 	Underused  int `json:"underused"`
 	Dormant    int `json:"dormant"`
-	Orphaned   int `json:"orphaned"`
 }

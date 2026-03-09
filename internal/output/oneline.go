@@ -15,7 +15,7 @@ func RenderOneLine(report *types.CoverageReport, w io.Writer) {
 		return
 	}
 
-	needsAttention := s.Underused + s.Dormant + s.Orphaned
+	needsAttention := s.Underused + s.Dormant
 	if needsAttention == 0 {
 		fmt.Fprintln(w, "ccoverage: 100% active | all config items healthy")
 		return

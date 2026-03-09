@@ -25,14 +25,14 @@ var (
 var reportCmd = &cobra.Command{
 	Use:   "report",
 	Short: "Generate a coverage report for Claude Code configuration",
-	Long:  "Scan repository config, locate session history, analyze usage, and produce a coverage report showing Active, Underused, Dormant, and Orphaned items.",
+	Long:  "Scan repository config, locate session history, analyze usage, and produce a coverage report showing Active, Underused, and Dormant items.",
 	RunE:  runReport,
 }
 
 func init() {
 	reportCmd.Flags().IntVar(&underuseThreshold, "threshold", 2, "Activations at or below this value are classified as Underused")
-	reportCmd.Flags().StringVar(&statusFilter, "status", "", "Comma-separated statuses to include (Active,Underused,Dormant,Orphaned)")
-	reportCmd.Flags().StringVar(&typeFilter, "type", "", "Comma-separated config types to include (CLAUDE.md,Skill,MCP,Hook,Command)")
+	reportCmd.Flags().StringVar(&statusFilter, "status", "", "Comma-separated statuses to include (Active,Underused,Dormant)")
+	reportCmd.Flags().StringVar(&typeFilter, "type", "", "Comma-separated config types to include (CLAUDE.md,Skill,MCP,Hook,Command,Plugin)")
 	reportCmd.Flags().BoolVar(&errorOnMatch, "error-on-match", false, "Exit with code 1 if any results remain after filtering")
 	reportCmd.Flags().BoolVar(&lastSession, "last-session", false, "Include per-item hit/miss for the most recent session")
 	rootCmd.AddCommand(reportCmd)
@@ -51,7 +51,7 @@ func runReport(cmd *cobra.Command, args []string) error {
 
 	if len(manifest.Items) == 0 {
 		fmt.Fprintln(os.Stderr, "No Claude Code configuration found in this repository.")
-		fmt.Fprintln(os.Stderr, "  Looked for: CLAUDE.md files, .claude/skills/, .mcp.json, .claude/settings.json hooks, .claude/commands/")
+		fmt.Fprintln(os.Stderr, "  Looked for: CLAUDE.md files, .claude/skills/, .mcp.json, .claude/settings.json hooks, .claude/commands/, plugins")
 		return nil
 	}
 
@@ -122,6 +122,7 @@ func parseTypeFilter(raw string) map[types.ConfigType]bool {
 		"mcp":       types.ConfigMCP,
 		"hook":      types.ConfigHook,
 		"command":   types.ConfigCommand,
+		"plugin":    types.ConfigPlugin,
 	}
 	m := make(map[types.ConfigType]bool)
 	for _, s := range strings.Split(raw, ",") {
@@ -163,8 +164,6 @@ func filterReport(report *types.CoverageReport, statusRaw, typeRaw string) *type
 			summary.Underused++
 		case types.StatusDormant:
 			summary.Dormant++
-		case types.StatusOrphaned:
-			summary.Orphaned++
 		}
 	}
 
