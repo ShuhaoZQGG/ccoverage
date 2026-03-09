@@ -54,8 +54,6 @@ func Analyze(manifest *types.Manifest, sessionFiles []string, lookbackDays int, 
 			summary.Underused++
 		case types.StatusDormant:
 			summary.Dormant++
-		case types.StatusOrphaned:
-			summary.Orphaned++
 		}
 	}
 
