@@ -89,7 +89,6 @@ func scanHooks(repoPath string) ([]types.ManifestItem, error) {
 				Path:         filepath.ToSlash(relPath),
 				AbsPath:      absPath,
 				LastModified: lastMod,
-				Exists:       true,
 				Metadata:     metadata,
 			})
 		}

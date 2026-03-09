@@ -95,7 +95,6 @@ func scanSkillsDir(skillsDir, repoPath string, isRoot bool) ([]types.ManifestIte
 			Path:         displayPath,
 			AbsPath:      absPath,
 			LastModified: info.ModTime(),
-			Exists:       true,
 			Metadata:     metadata,
 		})
 	}

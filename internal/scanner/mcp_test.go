@@ -34,9 +34,6 @@ func TestScanDotMCPJSON(t *testing.T) {
 		if item.Path != ".mcp.json" {
 			t.Errorf("expected path .mcp.json, got %s", item.Path)
 		}
-		if !item.Exists {
-			t.Error("expected Exists=true")
-		}
 	}
 
 	if !names["supabase"] || !names["github"] {

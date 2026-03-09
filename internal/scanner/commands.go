@@ -60,7 +60,6 @@ func scanCommands(repoPath string) ([]types.ManifestItem, error) {
 			Path:         filepath.ToSlash(relPath),
 			AbsPath:      absPath,
 			LastModified: info.ModTime(),
-			Exists:       true,
 		})
 	}
 

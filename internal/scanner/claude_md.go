@@ -57,7 +57,6 @@ func scanClaudeMD(repoPath string) ([]types.ManifestItem, error) {
 			Path:         filepath.ToSlash(relPath),
 			AbsPath:      absPath,
 			LastModified: info.ModTime(),
-			Exists:       true,
 		})
 
 		return nil

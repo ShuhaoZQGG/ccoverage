@@ -82,9 +82,6 @@ func TestBuildManifest_WithConfig(t *testing.T) {
 	typeCount := map[string]int{}
 	for _, item := range manifest.Items {
 		typeCount[string(item.Type)]++
-		if !item.Exists {
-			t.Errorf("item %s:%s should exist", item.Type, item.Name)
-		}
 	}
 
 	for _, expected := range []string{"CLAUDE.md", "Skill", "MCP", "Hook", "Command"} {

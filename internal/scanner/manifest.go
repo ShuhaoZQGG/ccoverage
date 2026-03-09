@@ -33,6 +33,7 @@ func BuildManifest(repoPath string) (*types.Manifest, error) {
 		{"mcp", scanMCP},
 		{"hooks", scanHooks},
 		{"commands", scanCommands},
+		{"plugins", scanPlugins},
 	}
 
 	manifest := &types.Manifest{

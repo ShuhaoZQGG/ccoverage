@@ -196,6 +196,37 @@ func MatchUsage(
 		}
 	}
 
+	// -----------------------------------------------------------------------
+	// 4. Plugin component matching.
+	// -----------------------------------------------------------------------
+	// For each Plugin manifest item, check whether any of its components
+	// (MCP servers, skills, LSP) were observed in session events. Credit
+	// the plugin with the aggregated activations from its components.
+
+	for _, item := range manifest.Items {
+		if item.Type != types.ConfigPlugin {
+			continue
+		}
+
+		key := manifestKey(item.Type, item.Name)
+		pluginSummary := matchPluginComponents(item, allEvents)
+		if pluginSummary != nil {
+			s := getOrCreateSummary(summaries, key)
+			s.TotalActivations += pluginSummary.TotalActivations
+			s.UniqueSessions += pluginSummary.UniqueSessions
+			if pluginSummary.FirstSeen != nil {
+				if s.FirstSeen == nil || pluginSummary.FirstSeen.Before(*s.FirstSeen) {
+					s.FirstSeen = pluginSummary.FirstSeen
+				}
+			}
+			if pluginSummary.LastSeen != nil {
+				if s.LastSeen == nil || pluginSummary.LastSeen.After(*s.LastSeen) {
+					s.LastSeen = pluginSummary.LastSeen
+				}
+			}
+		}
+	}
+
 	return summaries, allCwds, nil
 }
 
@@ -271,6 +302,37 @@ func MatchSingleSession(manifest *types.Manifest, sessionFile string) (*types.La
 			if active {
 				count = 1
 			}
+		} else if item.Type == types.ConfigPlugin {
+			// Plugin matching: check if any of its components were used.
+			mcpServers := splitMetadata(item.Metadata["mcp_servers"])
+			skillNames := splitMetadata(item.Metadata["skill_names"])
+			commandNames := splitMetadata(item.Metadata["command_names"])
+			hasLSP := strings.Contains(item.Metadata["components"], "lsp")
+			lspExts := splitMetadata(item.Metadata["lsp_extensions"])
+			for _, s := range mcpServers {
+				count += activeKeys[eventKey{types.ConfigMCP, s}]
+			}
+			for _, s := range skillNames {
+				count += activeKeys[eventKey{types.ConfigSkill, s}]
+			}
+			for _, s := range commandNames {
+				count += activeKeys[eventKey{types.ConfigCommand, s}]
+				// parseUserLine also emits ConfigSkill for slash commands.
+				count += activeKeys[eventKey{types.ConfigSkill, s}]
+			}
+			// Skills may also appear as commands (parseUserLine emits both).
+			for _, s := range skillNames {
+				count += activeKeys[eventKey{types.ConfigCommand, s}]
+			}
+			if hasLSP {
+				// Match extension-qualified LSP events against this plugin's extensions.
+				for ek, c := range activeKeys {
+					if ek.ct == types.ConfigPlugin && matchLSPEvent(ek.name, lspExts) {
+						count += c
+					}
+				}
+			}
+			active = count > 0
 		} else {
 			count = activeKeys[eventKey{item.Type, item.Name}]
 			active = count > 0
@@ -289,6 +351,139 @@ func MatchSingleSession(manifest *types.Manifest, sessionFile string) (*types.La
 		Timestamp: sessionTime,
 		Items:     items,
 	}, nil
+}
+
+// ---------------------------------------------------------------------------
+// Plugin component matching
+// ---------------------------------------------------------------------------
+
+// matchPluginComponents checks whether any component of a plugin (MCP servers,
+// skills, LSP) was observed in the event stream. Returns a summary of matching
+// activations, or nil if no matches were found.
+func matchPluginComponents(item types.ManifestItem, events []types.UsageEvent) *types.UsageSummary {
+	mcpServers := splitMetadata(item.Metadata["mcp_servers"])
+	skillNames := splitMetadata(item.Metadata["skill_names"])
+	commandNames := splitMetadata(item.Metadata["command_names"])
+	hasLSP := strings.Contains(item.Metadata["components"], "lsp")
+
+	var totalActivations int
+	sessionSet := make(map[string]struct{})
+	var first, last time.Time
+
+	lspExts := splitMetadata(item.Metadata["lsp_extensions"])
+
+	for _, evt := range events {
+		matched := false
+		switch evt.ConfigType {
+		case types.ConfigMCP:
+			for _, s := range mcpServers {
+				if evt.Name == s {
+					matched = true
+					break
+				}
+			}
+		case types.ConfigSkill:
+			for _, s := range skillNames {
+				if evt.Name == s {
+					matched = true
+					break
+				}
+			}
+			if !matched {
+				for _, s := range commandNames {
+					if evt.Name == s {
+						matched = true
+						break
+					}
+				}
+			}
+		case types.ConfigCommand:
+			for _, s := range commandNames {
+				if evt.Name == s {
+					matched = true
+					break
+				}
+			}
+			if !matched {
+				for _, s := range skillNames {
+					if evt.Name == s {
+						matched = true
+						break
+					}
+				}
+			}
+		case types.ConfigPlugin:
+			if hasLSP {
+				matched = matchLSPEvent(evt.Name, lspExts)
+			}
+		}
+
+		if matched {
+			totalActivations++
+			if evt.SessionID != "" {
+				sessionSet[evt.SessionID] = struct{}{}
+			}
+			updateTimeRangeInline(&first, &last, evt.Timestamp)
+		}
+	}
+
+	if totalActivations == 0 {
+		return nil
+	}
+
+	s := &types.UsageSummary{
+		TotalActivations: totalActivations,
+		UniqueSessions:   len(sessionSet),
+	}
+	if !first.IsZero() {
+		s.FirstSeen = &first
+		s.LastSeen = &last
+	}
+	return s
+}
+
+// matchLSPEvent checks whether an LSP event name matches a plugin's supported
+// extensions. Event names are either "LSP" (legacy, no extension info) or
+// "LSP:.ext" (extension-qualified). When lspExts is non-empty, only
+// extension-qualified events matching one of those extensions are accepted.
+// When lspExts is empty, both "LSP" and "LSP:*" match (backwards compat for
+// plugins without parsed extensions).
+func matchLSPEvent(eventName string, lspExts []string) bool {
+	if eventName == "LSP" {
+		// Legacy unqualified event — match if plugin has no extension info.
+		return len(lspExts) == 0
+	}
+	if !strings.HasPrefix(eventName, "LSP:") {
+		return false
+	}
+	ext := eventName[4:] // e.g. ".go"
+	if len(lspExts) == 0 {
+		// Plugin has no extension info — accept any LSP event.
+		return true
+	}
+	for _, e := range lspExts {
+		if e == ext {
+			return true
+		}
+	}
+	return false
+}
+
+// splitMetadata splits a comma-separated metadata value into a slice.
+// Returns nil for empty strings.
+func splitMetadata(val string) []string {
+	if val == "" {
+		return nil
+	}
+	parts := strings.Split(val, ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
 }
 
 // ---------------------------------------------------------------------------

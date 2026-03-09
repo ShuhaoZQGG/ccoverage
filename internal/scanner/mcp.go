@@ -102,7 +102,6 @@ func scanDotMCPJSON(repoPath string) ([]types.ManifestItem, error) {
 			Path:         filepath.ToSlash(relPath),
 			AbsPath:      absPath,
 			LastModified: lastMod,
-			Exists:       true,
 		})
 	}
 
@@ -161,7 +160,6 @@ func scanClaudeJSONMCP(repoPath string) ([]types.ManifestItem, error) {
 				Path:         "~/.claude.json",
 				AbsPath:      claudePath,
 				LastModified: lastMod,
-				Exists:       true,
 			})
 		}
 	}
@@ -175,7 +173,6 @@ func scanClaudeJSONMCP(repoPath string) ([]types.ManifestItem, error) {
 				Path:         "~/.claude.json",
 				AbsPath:      claudePath,
 				LastModified: lastMod,
-				Exists:       true,
 			})
 		}
 	}

@@ -60,6 +60,11 @@ type rawAgentInput struct {
 	SubagentType string `json:"subagent_type"`
 }
 
+// rawLSPInput captures the filePath from LSP tool invocations.
+type rawLSPInput struct {
+	FilePath string `json:"filePath"`
+}
+
 // rawFileInput captures path fields from file-oriented tools (Read, Edit,
 // Write, Glob, Grep).
 type rawFileInput struct {
@@ -197,6 +202,27 @@ func parseAssistantLineWithBlocks(raw rawLine, sessionID string, ts time.Time) (
 			events = append(events, types.UsageEvent{
 				ConfigType: types.ConfigMCP,
 				Name:       server,
+				SessionID:  sessionID,
+				Timestamp:  ts,
+				Cwd:        raw.Cwd,
+			})
+
+		case block.Name == "LSP":
+			// Extract file extension from the filePath input to attribute
+			// the LSP call to the correct language plugin.
+			lspName := "LSP"
+			if len(block.Input) > 0 {
+				var inp rawLSPInput
+				if json.Unmarshal(block.Input, &inp) == nil && inp.FilePath != "" {
+					ext := filepath.Ext(inp.FilePath)
+					if ext != "" {
+						lspName = "LSP:" + ext
+					}
+				}
+			}
+			events = append(events, types.UsageEvent{
+				ConfigType: types.ConfigPlugin,
+				Name:       lspName,
 				SessionID:  sessionID,
 				Timestamp:  ts,
 				Cwd:        raw.Cwd,
