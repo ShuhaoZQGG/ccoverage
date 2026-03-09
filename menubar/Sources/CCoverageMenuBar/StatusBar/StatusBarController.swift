@@ -48,7 +48,7 @@ final class StatusBarController {
         visualEffect.addSubview(hostingController.view)
 
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "checkmark.seal", accessibilityDescription: "ccoverage")
+            button.image = MenuBarIcon.logo()
             button.target = self
             button.action = #selector(togglePopover)
         }
@@ -119,11 +119,10 @@ final class StatusBarController {
 
     func updateBadge(debtCount: Int) {
         guard let button = statusItem.button else { return }
+        button.image = MenuBarIcon.logo()
         if debtCount > 0 {
-            button.image = NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: "debt")
             button.title = " \(debtCount)"
         } else {
-            button.image = NSImage(systemSymbolName: "checkmark.seal", accessibilityDescription: "clean")
             button.title = ""
         }
     }

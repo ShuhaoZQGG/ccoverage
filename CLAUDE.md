@@ -1,6 +1,6 @@
 # ccoverage
 
-Coverage analysis for Claude Code project configuration. Scans a repo's CLAUDE.md files, skills, MCP servers, hooks, and commands, then joins against session history to classify each item as Active, Underused, Dormant, or Orphaned.
+Coverage analysis for Claude Code project configuration. Scans a repo's CLAUDE.md files, skills, MCP servers, hooks, and commands, then joins against session history to classify each item as Active, Underused, or Dormant.
 
 ## Build / Test / Run
 
@@ -10,9 +10,9 @@ CGO_ENABLED=0 go test ./...             # CGO_ENABLED=0 also needed for tests on
 
 ccoverage scan   --repo-path . --format text   # manifest only, no session data
 ccoverage report --repo-path . --lookback-days 30 --threshold 2 --format json
-ccoverage report --status Dormant,Orphaned                     # filter by status
+ccoverage report --status Dormant                              # filter by status
 ccoverage report --type MCP --format json                      # filter by config type
-ccoverage report --status Orphaned --error-on-match            # CI gate: exit 1 if matches
+ccoverage report --status Dormant --error-on-match             # CI gate: exit 1 if matches
 ccoverage init   --repo-path ~/Project/MyRepo                  # install SessionEnd hook
 ccoverage summary --repo-path ~/Project/MyRepo                 # one-line summary (hook use)
 ```
@@ -57,7 +57,7 @@ No other cross-imports between leaf packages. `cmd/` imports all five.
 - **Graceful degradation**: missing files/dirs produce nil results, not errors. Malformed JSONL lines are skipped with `log.Printf`.
 - **Manifest key format**: `"Type:Name"` (e.g., `"CLAUDE.md:CLAUDE.md"`, `"MCP:supabase"`)
 - **ConfigType constants**: `ConfigClaudeMD`, `ConfigSkill`, `ConfigMCP`, `ConfigHook`, `ConfigCommand`
-- **Status constants**: `StatusActive`, `StatusUnderused`, `StatusDormant`, `StatusOrphaned` (4-tier priority in that order)
+- **Status constants**: `StatusActive`, `StatusUnderused`, `StatusDormant` (3-tier priority in that order)
 
 ## Gotchas
 
@@ -68,3 +68,17 @@ No other cross-imports between leaf packages. `cmd/` imports all five.
 - **Hook output protocol**: `summary` uses exit code 2 + stderr for `SessionEnd` hooks. This is the only way to show a message to the user from SessionEnd — stdout is ignored, `systemMessage` JSON doesn't display, and exit 0 output is only visible in verbose mode. The "hook failed:" prefix is added by Claude Code automatically.
 - **stdin handling in hooks**: Claude Code pipes JSON to hook stdin but may not close the pipe. Use `json.NewDecoder().Decode()` (reads one object) instead of `io.ReadAll()` (waits for EOF) to avoid hanging.
 - **`os.TempDir()` on macOS**: returns `/var/folders/.../T/`, not `/tmp/`.
+
+## Code Intelligence
+
+Prefer LSP over Grep/Read for code navigation — it's faster, precise, and avoids reading entire files:
+- `workspaceSymbol` to find where something is defined
+- `findReferences` to see all usages across the codebase
+- `goToDefinition` / `goToImplementation` to jump to source
+- `hover` for type info without reading the file
+
+This project has `gopls-lsp` (Go) and `swift-lsp` (Swift) plugins installed and enabled.
+
+Use Grep only when LSP isn't available or for text/pattern searches (comments, strings, config files).
+
+After writing or editing code, check LSP diagnostics and fix errors before proceeding.

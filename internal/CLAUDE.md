@@ -1,6 +1,6 @@
 # Code Intelligence
 
-Prefer LSP over Grep/Read for code navigation — it's faster, precise, and avoids reading entire files:
+Prefer Go LSP over Grep/Read for code navigation — it's faster, precise, and avoids reading entire files:
 - `workspaceSymbol` to find where something is defined
 - `findReferences` to see all usages across the codebase
 - `goToDefinition` / `goToImplementation` to jump to source
@@ -58,7 +58,7 @@ Three files, three responsibilities:
 
 ### coverage (`coverage/`)
 
-- **`status.go`** — `Classify(item, usage, threshold)` is a pure function. Priority: Orphaned (not exists) > Dormant (zero activations) > Underused (<= threshold) > Active.
+- **`status.go`** — `Classify(item, usage, threshold)` is a pure function. Priority: Dormant (zero activations) > Underused (<= threshold) > Active.
 - **`analyzer.go`** — `Analyze(manifest, sessionFiles, lookbackDays, threshold)` calls `usage.MatchUsage`, then `Classify` per item. Builds the final `CoverageReport`.
 
 ### output (`output/`)

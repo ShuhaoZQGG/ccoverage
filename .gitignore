@@ -1,5 +1,5 @@
 # Compiled binary
-ccoverage
+/ccoverage
 
 # Cross-compiled binaries
 *.exe
