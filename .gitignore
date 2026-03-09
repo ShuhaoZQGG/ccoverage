@@ -7,3 +7,6 @@ ccoverage
 *.dll
 *.so
 *.dylib
+
+# Swift Package Manager build artifacts
+menubar/.build/
