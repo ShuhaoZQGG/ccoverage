@@ -25,7 +25,13 @@ This is session-backed analysis, not just static file detection. It checks what 
 
 ## Quick Start
 
-### Install with Go
+### Homebrew (macOS/Linux)
+
+```sh
+brew install shuhaozhang/tap/ccoverage
+```
+
+### Go
 
 ```sh
 go install github.com/shuhaozhang/ccoverage@latest
