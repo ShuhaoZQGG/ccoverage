@@ -16,12 +16,15 @@ builds:
       - -X github.com/shuhaozhang/ccoverage/cmd.commit={{.ShortCommit}}
       - -X github.com/shuhaozhang/ccoverage/cmd.date={{.Date}}
 
+release:
+  replace_existing_draft: true
+
 archives:
   - format_overrides:
       - goos: windows
-        format: zip
+        formats: ['zip']
 
-brews:
+homebrew_casks:
   - repository:
       owner: shuhaozhang
       name: homebrew-tap
