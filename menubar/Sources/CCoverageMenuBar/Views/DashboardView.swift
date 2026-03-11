@@ -3,6 +3,7 @@ import SwiftUI
 struct DashboardView: View {
     @ObservedObject var viewModel: DashboardViewModel
     @State private var showSettings = false
+    @State private var showFullReport = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -62,11 +63,14 @@ struct DashboardView: View {
 
             // Footer
             HStack {
-                if let repo = viewModel.currentRepo {
+                if let repo = viewModel.currentRepo, let report = repo.report {
                     Button("View full report") {
-                        openTerminalReport(repoPath: repo.repoPath)
+                        showFullReport = true
                     }
                     .font(.caption)
+                    .sheet(isPresented: $showFullReport) {
+                        FullReportView(report: report)
+                    }
                 }
                 Spacer()
                 Button {
@@ -124,15 +128,6 @@ struct DashboardView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-        }
-    }
-
-    private func openTerminalReport(repoPath: String) {
-        let escapedPath = repoPath.replacingOccurrences(of: "\"", with: "\\\"")
-        let script = "tell application \"Terminal\" to do script \"ccoverage report --target \\\"\(escapedPath)\\\"\""
-        if let appleScript = NSAppleScript(source: script) {
-            var error: NSDictionary?
-            appleScript.executeAndReturnError(&error)
         }
     }
 }

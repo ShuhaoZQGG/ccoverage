@@ -12,6 +12,23 @@ private let isoFormatter: ISO8601DateFormatter = {
     return f
 }()
 
+func resolveCCoverageBinaryPath(settings: AppSettings) -> String? {
+    let fm = FileManager.default
+    if let explicit = settings.ccoverageBinaryPath, fm.isExecutableFile(atPath: explicit) {
+        return explicit
+    }
+    if let pathEnv = ProcessInfo.processInfo.environment["PATH"] {
+        for dir in pathEnv.split(separator: ":") {
+            let candidate = "\(dir)/ccoverage"
+            if fm.isExecutableFile(atPath: candidate) { return candidate }
+        }
+    }
+    for fallback in ["/opt/homebrew/bin/ccoverage", "/usr/local/bin/ccoverage"] {
+        if fm.isExecutableFile(atPath: fallback) { return fallback }
+    }
+    return nil
+}
+
 actor ReportRunner {
     func runReport(repoPath: String, settings: AppSettings) async throws -> CoverageReport {
         let binaryPath = try resolveBinaryPath(settings: settings)
@@ -107,33 +124,10 @@ actor ReportRunner {
     }
 
     private func resolveBinaryPath(settings: AppSettings) throws -> String {
-        let fm = FileManager.default
-
-        if let explicit = settings.ccoverageBinaryPath, fm.isExecutableFile(atPath: explicit) {
-            return explicit
+        guard let path = resolveCCoverageBinaryPath(settings: settings) else {
+            throw ReportRunnerError.binaryNotFound
         }
-
-        // Search PATH
-        if let pathEnv = ProcessInfo.processInfo.environment["PATH"] {
-            for dir in pathEnv.split(separator: ":") {
-                let candidate = "\(dir)/ccoverage"
-                if fm.isExecutableFile(atPath: candidate) {
-                    return candidate
-                }
-            }
-        }
-
-        let fallbacks = [
-            "/opt/homebrew/bin/ccoverage",
-            "/usr/local/bin/ccoverage",
-        ]
-        for fallback in fallbacks {
-            if fm.isExecutableFile(atPath: fallback) {
-                return fallback
-            }
-        }
-
-        throw ReportRunnerError.binaryNotFound
+        return path
     }
 }
 
