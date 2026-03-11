@@ -3,7 +3,7 @@ package coverage
 import (
 	"testing"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 func TestClassify(t *testing.T) {

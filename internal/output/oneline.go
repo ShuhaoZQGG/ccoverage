@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 // RenderOneLine writes a single-line coverage summary to w. If the manifest

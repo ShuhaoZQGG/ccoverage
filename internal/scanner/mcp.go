@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 // mcpFile mirrors the top-level structure of .mcp.json.

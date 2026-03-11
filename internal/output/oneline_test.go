@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 func TestRenderOneLine_AllHealthy(t *testing.T) {

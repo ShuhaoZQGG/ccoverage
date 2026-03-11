@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 // RenderMarkdown writes a GitHub-flavoured Markdown table to w. The output

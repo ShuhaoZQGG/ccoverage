@@ -12,9 +12,9 @@ builds:
       - arm64
     ldflags:
       - -s -w
-      - -X github.com/shuhaozhang/ccoverage/cmd.version={{.Version}}
-      - -X github.com/shuhaozhang/ccoverage/cmd.commit={{.ShortCommit}}
-      - -X github.com/shuhaozhang/ccoverage/cmd.date={{.Date}}
+      - -X github.com/ShuhaoZQGG/ccoverage/cmd.version={{.Version}}
+      - -X github.com/ShuhaoZQGG/ccoverage/cmd.commit={{.ShortCommit}}
+      - -X github.com/ShuhaoZQGG/ccoverage/cmd.date={{.Date}}
 
 release:
   replace_existing_draft: true
@@ -26,10 +26,10 @@ archives:
 
 brews:
   - repository:
-      owner: shuhaozhang
+      owner: ShuhaoZQGG
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    homepage: "https://github.com/shuhaozhang/ccoverage"
+    homepage: "https://github.com/ShuhaoZQGG/ccoverage"
     description: "Coverage analysis for Claude Code project configuration"
     license: "MIT"
     install: |

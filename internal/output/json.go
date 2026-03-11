@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 // RenderJSON serialises report as indented JSON and writes it to w, followed

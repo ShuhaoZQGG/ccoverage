@@ -3,8 +3,8 @@ package coverage
 import (
 	"fmt"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
-	"github.com/shuhaozhang/ccoverage/internal/usage"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/usage"
 )
 
 // Analyze produces a CoverageReport by joining the manifest against usage data

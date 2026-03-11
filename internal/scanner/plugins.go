@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 // lspExtRe matches backtick-wrapped extensions like `.go` in README files.

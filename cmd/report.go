@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/shuhaozhang/ccoverage/internal/coverage"
-	"github.com/shuhaozhang/ccoverage/internal/output"
-	"github.com/shuhaozhang/ccoverage/internal/scanner"
-	"github.com/shuhaozhang/ccoverage/internal/types"
-	"github.com/shuhaozhang/ccoverage/internal/usage"
+	"github.com/ShuhaoZQGG/ccoverage/internal/coverage"
+	"github.com/ShuhaoZQGG/ccoverage/internal/output"
+	"github.com/ShuhaoZQGG/ccoverage/internal/scanner"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/usage"
 	"github.com/spf13/cobra"
 )
 

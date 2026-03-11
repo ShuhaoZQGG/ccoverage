@@ -1,4 +1,4 @@
-module github.com/shuhaozhang/ccoverage
+module github.com/ShuhaoZQGG/ccoverage
 
 go 1.21.7
 

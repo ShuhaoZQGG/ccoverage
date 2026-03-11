@@ -2,8 +2,8 @@
 
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![CI](https://github.com/shuhaozhang/ccoverage/actions/workflows/ci.yml/badge.svg)](https://github.com/shuhaozhang/ccoverage/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/shuhaozhang/ccoverage)](https://goreportcard.com/report/github.com/shuhaozhang/ccoverage)
+[![CI](https://github.com/ShuhaoZQGG/ccoverage/actions/workflows/ci.yml/badge.svg)](https://github.com/ShuhaoZQGG/ccoverage/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ShuhaoZQGG/ccoverage)](https://goreportcard.com/report/github.com/ShuhaoZQGG/ccoverage)
 
 **Know what's actually working in your Claude Code setup — and what's dead weight.**
 
@@ -28,18 +28,18 @@ This is session-backed analysis, not just static file detection. It checks what 
 ### Homebrew (macOS/Linux)
 
 ```sh
-brew install shuhaozhang/tap/ccoverage
+brew install ShuhaoZQGG/tap/ccoverage
 ```
 
 ### Go
 
 ```sh
-go install github.com/shuhaozhang/ccoverage@latest
+go install github.com/ShuhaoZQGG/ccoverage@latest
 ```
 
 ### Download from Releases
 
-Grab a prebuilt binary from [GitHub Releases](https://github.com/shuhaozhang/ccoverage/releases) for Linux, macOS, or Windows (amd64/arm64).
+Grab a prebuilt binary from [GitHub Releases](https://github.com/ShuhaoZQGG/ccoverage/releases) for Linux, macOS, or Windows (amd64/arm64).
 
 ## Usage
 
@@ -108,7 +108,7 @@ Use `--error-on-match` to fail your build when dormant config is detected:
 # .github/workflows/config-hygiene.yml
 - name: Check for dormant config
   run: |
-    go install github.com/shuhaozhang/ccoverage@latest
+    go install github.com/ShuhaoZQGG/ccoverage@latest
     ccoverage report --status Dormant --error-on-match
 ```
 

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 // manifestKey returns the canonical lookup key for a manifest item.

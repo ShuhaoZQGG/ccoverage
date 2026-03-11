@@ -2,9 +2,9 @@ VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo none)
 DATE    ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 LDFLAGS  = -s -w \
-           -X github.com/shuhaozhang/ccoverage/cmd.version=$(VERSION) \
-           -X github.com/shuhaozhang/ccoverage/cmd.commit=$(COMMIT) \
-           -X github.com/shuhaozhang/ccoverage/cmd.date=$(DATE)
+           -X github.com/ShuhaoZQGG/ccoverage/cmd.version=$(VERSION) \
+           -X github.com/ShuhaoZQGG/ccoverage/cmd.commit=$(COMMIT) \
+           -X github.com/ShuhaoZQGG/ccoverage/cmd.date=$(DATE)
 
 .PHONY: build test clean menubar menubar-release app-bundle dmg demo
 

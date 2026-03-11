@@ -7,7 +7,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 func TestScanPlugins_NoSettings(t *testing.T) {

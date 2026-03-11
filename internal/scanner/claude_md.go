@@ -3,7 +3,7 @@ package scanner
 import (
 	"os"
 	"path/filepath"
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 // skipDirs contains directory names that should never be descended into.

@@ -2,7 +2,7 @@
 // joining manifest data with session usage summaries.
 package coverage
 
-import "github.com/shuhaozhang/ccoverage/internal/types"
+import "github.com/ShuhaoZQGG/ccoverage/internal/types"
 
 // Classify returns the Status for a single manifest item given its observed
 // usage and the configured underuse threshold.

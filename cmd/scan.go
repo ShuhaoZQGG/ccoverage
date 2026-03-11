@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/shuhaozhang/ccoverage/internal/scanner"
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/scanner"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 	"github.com/spf13/cobra"
 )
 

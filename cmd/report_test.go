@@ -3,7 +3,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 func TestParseStatusFilter(t *testing.T) {

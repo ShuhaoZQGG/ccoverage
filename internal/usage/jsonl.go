@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shuhaozhang/ccoverage/internal/types"
+	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
 // scannerBufferSize is the maximum line size accepted by the JSONL scanner.
