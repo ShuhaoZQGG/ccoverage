@@ -9,11 +9,11 @@ Type "# ccoverage — configuration coverage for Claude Code"
 Enter
 Sleep 1s
 
-Type "ccoverage scan --repo-path . --format text"
+Type "ccoverage scan --target . --format text"
 Enter
 Sleep 3s
 
-Type "ccoverage report --repo-path . --format text"
+Type "ccoverage report --target . --format text"
 Enter
 Sleep 3s
 

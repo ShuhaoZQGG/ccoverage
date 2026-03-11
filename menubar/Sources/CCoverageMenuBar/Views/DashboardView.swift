@@ -129,7 +129,7 @@ struct DashboardView: View {
 
     private func openTerminalReport(repoPath: String) {
         let escapedPath = repoPath.replacingOccurrences(of: "\"", with: "\\\"")
-        let script = "tell application \"Terminal\" to do script \"ccoverage report --repo-path \\\"\(escapedPath)\\\"\""
+        let script = "tell application \"Terminal\" to do script \"ccoverage report --target \\\"\(escapedPath)\\\"\""
         if let appleScript = NSAppleScript(source: script) {
             var error: NSDictionary?
             appleScript.executeAndReturnError(&error)

@@ -20,7 +20,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&repoPath, "repo-path", ".", "Path to the repository to analyze")
+	rootCmd.PersistentFlags().StringVarP(&repoPath, "target", "t", ".", "Path to the repository to analyze")
 	rootCmd.PersistentFlags().IntVar(&lookbackDays, "lookback-days", 30, "Number of days to look back for usage data")
 	rootCmd.PersistentFlags().StringVar(&outputFormat, "format", "text", "Output format: text, json, md")
 }

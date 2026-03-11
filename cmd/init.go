@@ -52,7 +52,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	hookCommand := fmt.Sprintf("%s summary --repo-path %s", exePath, absRepo)
+	hookCommand := fmt.Sprintf("%s summary --target %s", exePath, absRepo)
 
 	// Build the ccoverage hook entry.
 	ccoverageHook := map[string]interface{}{

@@ -46,7 +46,7 @@ Grab a prebuilt binary from [GitHub Releases](https://github.com/shuhaozhang/cco
 ### `scan` — See what's configured
 
 ```sh
-ccoverage scan --repo-path . --format text
+ccoverage scan --target . --format text
 ```
 
 Lists all detected configuration items without checking session data.
@@ -54,7 +54,7 @@ Lists all detected configuration items without checking session data.
 ### `report` — Full coverage analysis
 
 ```sh
-ccoverage report --repo-path . --lookback-days 30 --format json
+ccoverage report --target . --lookback-days 30 --format json
 ```
 
 Scans config, matches against session history, and classifies each item.
@@ -70,7 +70,7 @@ ccoverage report --status Dormant,Underused --format md
 ### `init` — Install the SessionEnd hook
 
 ```sh
-ccoverage init --repo-path ~/Project/MyRepo
+ccoverage init --target ~/Project/MyRepo
 ```
 
 Adds a `SessionEnd` hook to the repo's `.claude/settings.json` so you get a one-line coverage summary after every Claude Code session.
@@ -78,7 +78,7 @@ Adds a `SessionEnd` hook to the repo's `.claude/settings.json` so you get a one-
 ### `summary` — One-line summary (hook use)
 
 ```sh
-ccoverage summary --repo-path .
+ccoverage summary --target .
 ```
 
 Outputs a compact summary line. Designed to run as a `SessionEnd` hook.
@@ -119,7 +119,7 @@ Exit code 1 means matches were found. Clean up your config or adjust the filter.
 Run `ccoverage init` on your repo to automatically get a coverage summary after every Claude Code session:
 
 ```sh
-ccoverage init --repo-path .
+ccoverage init --target .
 ```
 
 This installs a hook that runs `ccoverage summary` at session end, showing something like:

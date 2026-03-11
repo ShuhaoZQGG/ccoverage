@@ -20,7 +20,7 @@ actor ReportRunner {
             executablePath: binaryPath,
             arguments: [
                 "report",
-                "--repo-path", repoPath,
+                "--target", repoPath,
                 "--format", "json",
                 "--last-session",
                 "--lookback-days", String(settings.lookbackDays)
@@ -37,7 +37,7 @@ actor ReportRunner {
             executablePath: binaryPath,
             arguments: [
                 "report",
-                "--repo-path", repoPath,
+                "--target", repoPath,
                 "--format", "json",
                 "--last-session",
                 "--lookback-days", String(lookbackDays)

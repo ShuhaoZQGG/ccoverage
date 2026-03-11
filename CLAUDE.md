@@ -8,16 +8,16 @@ Coverage analysis for Claude Code project configuration. Scans a repo's CLAUDE.m
 CGO_ENABLED=0 go build -o ccoverage .   # CGO_ENABLED=0 needed on macOS (Go 1.21 dyld issue)
 CGO_ENABLED=0 go test ./...             # CGO_ENABLED=0 also needed for tests on macOS
 
-ccoverage scan   --repo-path . --format text   # manifest only, no session data
-ccoverage report --repo-path . --lookback-days 30 --threshold 2 --format json
+ccoverage scan   --target . --format text          # manifest only, no session data
+ccoverage report --target . --lookback-days 30 --threshold 2 --format json
 ccoverage report --status Dormant                              # filter by status
 ccoverage report --type MCP --format json                      # filter by config type
 ccoverage report --status Dormant --error-on-match             # CI gate: exit 1 if matches
-ccoverage init   --repo-path ~/Project/MyRepo                  # install SessionEnd hook
-ccoverage summary --repo-path ~/Project/MyRepo                 # one-line summary (hook use)
+ccoverage init   --target ~/Project/MyRepo                     # install SessionEnd hook
+ccoverage summary --target ~/Project/MyRepo                    # one-line summary (hook use)
 ```
 
-Flags: `--repo-path` (default `.`), `--lookback-days` (default `30`), `--format` (`text`|`json`|`md`), `--threshold` (report only, default `2`), `--status` (comma-separated filter), `--type` (comma-separated filter), `--error-on-match` (exit 1 if results remain).
+Flags: `--target` / `-t` (default `.`), `--lookback-days` (default `30`), `--format` (`text`|`json`|`md`), `--threshold` (report only, default `2`), `--status` (comma-separated filter), `--type` (comma-separated filter), `--error-on-match` (exit 1 if results remain).
 
 ## Architecture
 
