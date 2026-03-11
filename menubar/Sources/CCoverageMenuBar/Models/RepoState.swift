@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-class RepoState: ObservableObject, @preconcurrency Identifiable {
+class RepoState: ObservableObject, Identifiable {
     let repoPath: String
     @Published var report: CoverageReport?
     @Published var error: String?
@@ -9,7 +9,7 @@ class RepoState: ObservableObject, @preconcurrency Identifiable {
     @Published var comparisonReport: ComparisonReport?
     @Published var comparisonError: String?
 
-    var id: String { repoPath }
+    nonisolated var id: String { repoPath }
 
     init(repoPath: String) {
         self.repoPath = repoPath
