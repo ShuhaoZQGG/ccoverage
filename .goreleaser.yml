@@ -1,0 +1,45 @@
+version: 2
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/shuhaozhang/ccoverage/cmd.version={{.Version}}
+      - -X github.com/shuhaozhang/ccoverage/cmd.commit={{.ShortCommit}}
+      - -X github.com/shuhaozhang/ccoverage/cmd.date={{.Date}}
+
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
+
+brews:
+  - repository:
+      owner: shuhaozhang
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: "https://github.com/shuhaozhang/ccoverage"
+    description: "Coverage analysis for Claude Code project configuration"
+    license: "MIT"
+    install: |
+      bin.install "ccoverage"
+    test: |
+      system "#{bin}/ccoverage", "--version"
+
+changelog:
+  sort: asc
+  filters:
+    include:
+      - "^feat"
+      - "^fix"
+      - "^refactor"
+      - "^docs"
+      - "^ci"

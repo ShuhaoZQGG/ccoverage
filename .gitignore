@@ -8,5 +8,18 @@
 *.so
 *.dylib
 
+# GoReleaser output
+/dist/
+
+# Generated demo asset
+demo.gif
+
+# Build output
+/build/
+*.dmg
+
 # Swift Package Manager build artifacts
 menubar/.build/
+*.md
+!CLAUDE.md
+!README.md
