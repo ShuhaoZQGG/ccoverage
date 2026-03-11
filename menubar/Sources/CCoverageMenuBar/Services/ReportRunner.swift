@@ -123,9 +123,14 @@ actor ReportRunner {
             }
         }
 
-        let fallback = "/usr/local/bin/ccoverage"
-        if fm.isExecutableFile(atPath: fallback) {
-            return fallback
+        let fallbacks = [
+            "/opt/homebrew/bin/ccoverage",
+            "/usr/local/bin/ccoverage",
+        ]
+        for fallback in fallbacks {
+            if fm.isExecutableFile(atPath: fallback) {
+                return fallback
+            }
         }
 
         throw ReportRunnerError.binaryNotFound
