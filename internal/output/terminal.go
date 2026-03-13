@@ -21,6 +21,15 @@ const (
 	ansiRed = "\033[31m"
 )
 
+// displayName returns the item name with a " (global)" suffix when the item
+// has scope=root metadata, indicating it comes from a global config file.
+func displayName(item types.ManifestItem) string {
+	if item.Metadata != nil && item.Metadata["scope"] == "root" {
+		return item.Name + " (global)"
+	}
+	return item.Name
+}
+
 // isTTY reports whether os.Stdout is connected to a terminal. ANSI colour
 // codes are only appropriate when writing directly to a terminal; they corrupt
 // output that is piped to a file or another process.
@@ -89,7 +98,7 @@ func RenderText(report *types.CoverageReport, w io.Writer) {
 		fmt.Fprintf(tw, "%s\t%s\t%s\t%d\t%d\t%s\t%s\n",
 			r.Status,
 			r.Item.Type,
-			r.Item.Name,
+			displayName(r.Item),
 			r.Usage.TotalActivations,
 			r.Usage.UniqueSessions,
 			pctSessions,

@@ -34,7 +34,7 @@ func RenderMarkdown(report *types.CoverageReport, w io.Writer) {
 		fmt.Fprintf(w, "| %s | %s | %s | %d | %d | %s | %s |\n",
 			r.Status,
 			r.Item.Type,
-			r.Item.Name,
+			displayName(r.Item),
 			r.Usage.TotalActivations,
 			r.Usage.UniqueSessions,
 			pctSessions,
