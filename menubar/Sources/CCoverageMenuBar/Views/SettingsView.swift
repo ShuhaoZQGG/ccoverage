@@ -50,14 +50,23 @@ struct SettingsView: View {
                 }
             }
 
-            GroupBox("Binary Path") {
-                TextField("Auto-detect", text: Binding(
-                    get: { editingSettings.ccoverageBinaryPath ?? "" },
-                    set: { editingSettings.ccoverageBinaryPath = $0.isEmpty ? nil : $0 }
-                ))
-                .font(.caption)
-                .textFieldStyle(.roundedBorder)
+            DisclosureGroup("Advanced") {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Binary Path")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    TextField("Auto-detect", text: Binding(
+                        get: { editingSettings.ccoverageBinaryPath ?? "" },
+                        set: { editingSettings.ccoverageBinaryPath = $0.isEmpty ? nil : $0 }
+                    ))
+                    .font(.caption)
+                    .textFieldStyle(.roundedBorder)
+                    Text("Leave blank for auto-detection.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
+            .font(.caption)
 
             GroupBox("Poll Interval") {
                 HStack {

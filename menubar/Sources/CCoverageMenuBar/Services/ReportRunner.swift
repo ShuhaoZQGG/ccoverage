@@ -23,10 +23,50 @@ func resolveCCoverageBinaryPath(settings: AppSettings) -> String? {
             if fm.isExecutableFile(atPath: candidate) { return candidate }
         }
     }
-    for fallback in ["/opt/homebrew/bin/ccoverage", "/usr/local/bin/ccoverage"] {
+
+    var fallbacks = [
+        "/opt/homebrew/bin/ccoverage",
+        "/usr/local/bin/ccoverage",
+        NSHomeDirectory() + "/go/bin/ccoverage",
+    ]
+    let env = ProcessInfo.processInfo.environment
+    if let gobin = env["GOBIN"], !gobin.isEmpty {
+        fallbacks.append(gobin + "/ccoverage")
+    }
+    if let gopath = env["GOPATH"], !gopath.isEmpty {
+        fallbacks.append(gopath + "/bin/ccoverage")
+    }
+    for fallback in fallbacks {
         if fm.isExecutableFile(atPath: fallback) { return fallback }
     }
+
+    if let shellResolved = resolveViaLoginShell() {
+        return shellResolved
+    }
     return nil
+}
+
+private func resolveViaLoginShell() -> String? {
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/bin/zsh")
+    process.arguments = ["-l", "-c", "which ccoverage"]
+
+    let pipe = Pipe()
+    process.standardOutput = pipe
+    process.standardError = FileHandle.nullDevice
+
+    do {
+        try process.run()
+        process.waitUntilExit()
+    } catch {
+        return nil
+    }
+
+    guard process.terminationStatus == 0 else { return nil }
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    let path = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    guard !path.isEmpty, FileManager.default.isExecutableFile(atPath: path) else { return nil }
+    return path
 }
 
 actor ReportRunner {
@@ -140,7 +180,7 @@ enum ReportRunnerError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .binaryNotFound:
-            return "ccoverage binary not found. Set the path in Settings."
+            return "ccoverage binary not found. Install with:\n• brew install ShuhaoZQGG/tap/ccoverage\n• go install github.com/ShuhaoZQGG/ccoverage@latest\nOr set the path in Settings → Advanced."
         case .invalidOutput:
             return "Invalid output from ccoverage."
         case .emptyOutput:
