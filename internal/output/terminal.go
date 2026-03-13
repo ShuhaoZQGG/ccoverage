@@ -63,6 +63,25 @@ func statusColor(s types.Status) string {
 	return ""
 }
 
+// RenderManifestText writes a human-readable tabular manifest to w. Only shows
+// TYPE and NAME columns since scan has no usage data.
+func RenderManifestText(manifest *types.Manifest, w io.Writer) {
+	if len(manifest.Items) == 0 {
+		fmt.Fprintln(w, "No configuration items found.")
+		return
+	}
+
+	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(tw, "TYPE\tNAME")
+	fmt.Fprintln(tw, "----\t----")
+	for _, item := range manifest.Items {
+		fmt.Fprintf(tw, "%s\t%s\n", item.Type, displayName(item))
+	}
+	tw.Flush()
+
+	fmt.Fprintf(w, "\nTotal: %d items\n", len(manifest.Items))
+}
+
 // RenderText writes a human-readable tabular report to w. Columns are aligned
 // with text/tabwriter. When w is os.Stdout and stdout is a terminal, status
 // values are highlighted with ANSI colours.

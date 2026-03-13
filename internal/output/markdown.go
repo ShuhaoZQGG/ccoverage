@@ -7,6 +7,21 @@ import (
 	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 )
 
+// RenderManifestMarkdown writes a Markdown table of manifest items to w.
+func RenderManifestMarkdown(manifest *types.Manifest, w io.Writer) {
+	if len(manifest.Items) == 0 {
+		fmt.Fprintln(w, "No configuration items found.")
+		return
+	}
+
+	fmt.Fprintln(w, "| TYPE | NAME |")
+	fmt.Fprintln(w, "|------|------|")
+	for _, item := range manifest.Items {
+		fmt.Fprintf(w, "| %s | %s |\n", item.Type, displayName(item))
+	}
+	fmt.Fprintf(w, "\n**Total: %d items**\n", len(manifest.Items))
+}
+
 // RenderMarkdown writes a GitHub-flavoured Markdown table to w. The output
 // uses the same columns as RenderText but without ANSI colour codes, making it
 // suitable for embedding in Markdown documents and pull-request comments.

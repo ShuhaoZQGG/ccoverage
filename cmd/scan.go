@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ShuhaoZQGG/ccoverage/internal/output"
 	"github.com/ShuhaoZQGG/ccoverage/internal/scanner"
 	"github.com/ShuhaoZQGG/ccoverage/internal/types"
 	"github.com/spf13/cobra"
@@ -37,22 +38,17 @@ func runScan(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	report := &types.CoverageReport{
-		RepoPath:     manifest.RepoPath,
-		LookbackDays: 0,
-		Results:      make([]types.CoverageResult, len(manifest.Items)),
-		Summary: types.ReportSummary{
-			TotalItems: len(manifest.Items),
-		},
-	}
+	return renderManifest(manifest)
+}
 
-	for i, item := range manifest.Items {
-		report.Summary.Dormant++
-		report.Results[i] = types.CoverageResult{
-			Item:   item,
-			Status: types.StatusDormant,
-		}
+func renderManifest(manifest *types.Manifest) error {
+	switch outputFormat {
+	case "json":
+		return output.RenderManifestJSON(manifest, os.Stdout)
+	case "md", "markdown":
+		output.RenderManifestMarkdown(manifest, os.Stdout)
+	default:
+		output.RenderManifestText(manifest, os.Stdout)
 	}
-
-	return renderReport(report)
+	return nil
 }
