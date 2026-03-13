@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "command": "/Users/shuhaozhang/go/bin/ccoverage summary --target /Users/shuhaozhang/Project/ccoverage",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ]
+  }
+}
