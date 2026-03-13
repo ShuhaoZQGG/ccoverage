@@ -30,11 +30,11 @@ var reportCmd = &cobra.Command{
 }
 
 func init() {
-	reportCmd.Flags().IntVar(&underuseThreshold, "threshold", 2, "Activations at or below this value are classified as Underused")
-	reportCmd.Flags().StringVar(&statusFilter, "status", "", "Comma-separated statuses to include (Active,Underused,Dormant)")
-	reportCmd.Flags().StringVar(&typeFilter, "type", "", "Comma-separated config types to include (CLAUDE.md,Skill,MCP,Hook,Command,Plugin)")
-	reportCmd.Flags().BoolVar(&errorOnMatch, "error-on-match", false, "Exit with code 1 if any results remain after filtering")
-	reportCmd.Flags().BoolVar(&lastSession, "last-session", false, "Include per-item hit/miss for the most recent session")
+	reportCmd.Flags().IntVarP(&underuseThreshold, "threshold", "n", 2, "Activations at or below this value are classified as Underused")
+	reportCmd.Flags().StringVarP(&statusFilter, "status", "s", "", "Comma-separated statuses to include (Active,Underused,Dormant)")
+	reportCmd.Flags().StringVarP(&typeFilter, "type", "T", "", "Comma-separated config types to include (CLAUDE.md,Skill,MCP,Hook,Command,Plugin)")
+	reportCmd.Flags().BoolVarP(&errorOnMatch, "error-on-match", "e", false, "Exit with code 1 if any results remain after filtering")
+	reportCmd.Flags().BoolVarP(&lastSession, "last-session", "l", false, "Include per-item hit/miss for the most recent session")
 	rootCmd.AddCommand(reportCmd)
 }
 
