@@ -11,9 +11,6 @@
 # GoReleaser output
 /dist/
 
-# Generated demo asset
-demo.gif
-
 # Build output
 /build/
 *.dmg
