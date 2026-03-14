@@ -152,6 +152,25 @@ ccoverage report --format md
 
 ccoverage includes a companion macOS menubar app (in `menubar/`) built with Swift that displays your latest coverage summary at a glance.
 
+### Prerequisites
+
+- macOS 14 (Sonoma) or later
+- Swift 5.9+
+- `ccoverage` CLI binary in your PATH
+
+### Build & Run
+
+```sh
+cd menubar
+swift build                # debug build
+# swift build -c release   # optimized build
+
+# run the app
+.build/arm64-apple-macosx/debug/CCoverageMenuBar
+```
+
+The app runs as a menubar-only app — it won't appear in the Dock, just in the menu bar.
+
 ## License
 
 [MIT](LICENSE)
