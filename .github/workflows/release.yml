@@ -102,18 +102,91 @@ jobs:
         with:
           ref: ${{ needs.tag.outputs.new_tag || github.ref }}
 
-      - name: Build universal binary
+      # Build CLI binary (Go)
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Build CLI
+        run: CGO_ENABLED=0 go build -o build/ccoverage .
+
+      # Build menubar binary (Swift universal)
+      - name: Build universal menubar binary
         run: swift build -c release --arch arm64 --arch x86_64
         working-directory: menubar
 
+      # Create app bundle (includes CLI + menubar binaries)
       - name: Create app bundle
         run: ./scripts/create-app-bundle.sh
+
+      # Code signing
+      - name: Import signing certificate
+        env:
+          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          CERT_PATH=$RUNNER_TEMP/certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          KEYCHAIN_PASSWORD=$(openssl rand -hex 12)
+
+          echo -n "$APPLE_CERTIFICATE_BASE64" | base64 --decode -o $CERT_PATH
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          security import $CERT_PATH -P "$APPLE_CERTIFICATE_PASSWORD" \
+            -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: \
+            -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+      - name: Sign app bundle
+        env:
+          DEVELOPER_ID: ${{ secrets.DEVELOPER_ID }}
+        run: |
+          # Sign embedded binaries first (inside-out)
+          codesign --force --options runtime --timestamp \
+            --sign "$DEVELOPER_ID" \
+            --entitlements menubar/Release/Entitlements.plist \
+            build/CCoverage.app/Contents/MacOS/ccoverage
+          codesign --force --options runtime --timestamp \
+            --sign "$DEVELOPER_ID" \
+            --entitlements menubar/Release/Entitlements.plist \
+            build/CCoverage.app/Contents/MacOS/CCoverage
+          # Sign the app bundle
+          codesign --force --options runtime --timestamp \
+            --sign "$DEVELOPER_ID" \
+            --entitlements menubar/Release/Entitlements.plist \
+            build/CCoverage.app
+
+      # Notarization
+      - name: Notarize app
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          ditto -c -k --keepParent build/CCoverage.app build/CCoverage.zip
+          xcrun notarytool submit build/CCoverage.zip \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APPLE_APP_PASSWORD" \
+            --wait
+          xcrun stapler staple build/CCoverage.app
+          rm build/CCoverage.zip
+
+      # Create DMG
+      - name: Install create-dmg
+        run: brew install create-dmg
 
       - name: Create DMG
         run: ./scripts/create-dmg.sh
 
+      # Upload to release
       - name: Upload DMG to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.tag.outputs.new_tag || github.ref_name }}
-          files: build/CCoverageMenuBar.dmg
+          files: build/CCoverage.dmg

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-APP_NAME="CCoverageMenuBar"
+APP_NAME="CCoverage"
 BUILD_DIR="build"
 APP_BUNDLE="${BUILD_DIR}/${APP_NAME}.app"
 CONTENTS="${APP_BUNDLE}/Contents"
@@ -17,27 +17,33 @@ echo "Creating ${APP_NAME}.app (version ${VERSION})..."
 rm -rf "${APP_BUNDLE}"
 mkdir -p "${MACOS}" "${RESOURCES}"
 
-# Copy binary — prefer release universal binary
-BINARY="menubar/.build/apple/Products/Release/${APP_NAME}"
-if [ ! -f "${BINARY}" ]; then
-    BINARY="menubar/.build/release/${APP_NAME}"
+# Copy menubar binary — prefer release universal binary
+MENUBAR_BINARY="menubar/.build/apple/Products/Release/CCoverageMenuBar"
+if [ ! -f "${MENUBAR_BINARY}" ]; then
+    MENUBAR_BINARY="menubar/.build/release/CCoverageMenuBar"
 fi
-if [ ! -f "${BINARY}" ]; then
-    echo "Error: Release binary not found. Run 'make menubar-release' first."
+if [ ! -f "${MENUBAR_BINARY}" ]; then
+    echo "Error: Release binary not found. Run 'swift build -c release' in menubar/ first."
     exit 1
 fi
 
-cp "${BINARY}" "${MACOS}/${APP_NAME}"
+cp "${MENUBAR_BINARY}" "${MACOS}/${APP_NAME}"
 chmod +x "${MACOS}/${APP_NAME}"
 
-# Copy icon if present
-ICON_SRC="menubar/Resources/AppIcon.icns"
+# Bundle CLI binary if available
+CLI_BINARY="${BUILD_DIR}/ccoverage"
+if [ -f "${CLI_BINARY}" ]; then
+    cp "${CLI_BINARY}" "${MACOS}/ccoverage"
+    chmod +x "${MACOS}/ccoverage"
+    echo "Bundled CLI binary"
+else
+    echo "Warning: CLI binary not found at ${CLI_BINARY}, skipping"
+fi
+
+# Copy icon
+ICON_SRC="menubar/Release/AppIcon.icns"
 if [ -f "${ICON_SRC}" ]; then
     cp "${ICON_SRC}" "${RESOURCES}/AppIcon.icns"
-    ICON_ENTRY="<key>CFBundleIconFile</key>
-	<string>AppIcon</string>"
-else
-    ICON_ENTRY=""
 fi
 
 # Generate Info.plist
@@ -49,11 +55,11 @@ cat > "${CONTENTS}/Info.plist" << PLIST
 	<key>CFBundleExecutable</key>
 	<string>${APP_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.shuhaozhang.ccoverage.menubar</string>
+	<string>com.shuhaozhang.CCoverage</string>
 	<key>CFBundleName</key>
 	<string>${APP_NAME}</string>
 	<key>CFBundleDisplayName</key>
-	<string>CCoverage Menu Bar</string>
+	<string>CCoverage</string>
 	<key>CFBundleVersion</key>
 	<string>${VERSION}</string>
 	<key>CFBundleShortVersionString</key>
@@ -64,7 +70,10 @@ cat > "${CONTENTS}/Info.plist" << PLIST
 	<string>14.0</string>
 	<key>LSUIElement</key>
 	<true/>
-	${ICON_ENTRY}
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
 </dict>
 </plist>
 PLIST

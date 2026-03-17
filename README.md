@@ -152,6 +152,12 @@ ccoverage report --format md
 
 ccoverage includes a companion macOS menubar app (in `menubar/`) built with Swift that displays your latest coverage summary at a glance.
 
+### Download (recommended)
+
+Download **CCoverage.dmg** from the [latest release](https://github.com/ShuhaoZQGG/ccoverage/releases/latest), open it, and drag CCoverage to Applications.
+
+The app is signed and notarized by Apple — no Gatekeeper warnings.
+
 ### Prerequisites
 
 - macOS 14 (Sonoma) or later
