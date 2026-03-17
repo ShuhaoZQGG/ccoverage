@@ -8,6 +8,7 @@ DMG_NAME="${APP_NAME}.dmg"
 DMG_PATH="${BUILD_DIR}/${DMG_NAME}"
 STAGING_DIR="${BUILD_DIR}/dmg-staging"
 BG_IMAGE="menubar/Release/dmg-background.png"
+ICON_SRC="menubar/Release/DMGIcon.icns"
 
 if [ ! -d "${APP_BUNDLE}" ]; then
     echo "Error: ${APP_BUNDLE} not found. Run 'make app-bundle' first."
@@ -28,6 +29,7 @@ ln -s /Applications "${STAGING_DIR}/Applications"
 if command -v create-dmg &>/dev/null && [ -f "${BG_IMAGE}" ]; then
     create-dmg \
         --volname "${APP_NAME}" \
+        --volicon "${ICON_SRC}" \
         --background "${BG_IMAGE}" \
         --window-pos 200 120 \
         --window-size 660 400 \
