@@ -20,3 +20,6 @@ menubar/.build/
 *.md
 !CLAUDE.md
 !README.md
+
+# macOS
+.DS_Store
