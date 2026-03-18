@@ -21,9 +21,8 @@ echo "Creating ${DMG_NAME}..."
 rm -rf "${STAGING_DIR}" "${DMG_PATH}"
 mkdir -p "${STAGING_DIR}"
 
-# Stage app bundle and Applications symlink
+# Stage app bundle
 cp -R "${APP_BUNDLE}" "${STAGING_DIR}/"
-ln -s /Applications "${STAGING_DIR}/Applications"
 
 # Use create-dmg for a polished DMG if available, otherwise fall back to hdiutil
 if command -v create-dmg &>/dev/null && [ -f "${BG_IMAGE}" ]; then
@@ -44,12 +43,19 @@ else
     if ! command -v create-dmg &>/dev/null; then
         echo "Note: create-dmg not found, using hdiutil (basic DMG layout)"
     fi
+    ln -s /Applications "${STAGING_DIR}/Applications"
     hdiutil create \
         -volname "${APP_NAME}" \
         -srcfolder "${STAGING_DIR}" \
         -ov \
         -format UDZO \
         "${DMG_PATH}"
+fi
+
+# Set custom icon on the .dmg file itself (not just the mounted volume)
+if command -v fileicon &>/dev/null && [ -f "${ICON_SRC}" ]; then
+    echo "Setting custom icon on ${DMG_PATH}..."
+    fileicon set "${DMG_PATH}" "${ICON_SRC}"
 fi
 
 # Clean up staging
