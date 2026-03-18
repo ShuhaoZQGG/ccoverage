@@ -37,7 +37,7 @@ final class SessionWatcher {
         )
 
         if let stream = stream {
-            FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+            FSEventStreamSetDispatchQueue(stream, .main)
             FSEventStreamStart(stream)
         }
     }

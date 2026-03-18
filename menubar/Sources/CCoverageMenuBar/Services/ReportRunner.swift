@@ -17,6 +17,13 @@ func resolveCCoverageBinaryPath(settings: AppSettings) -> String? {
     if let explicit = settings.ccoverageBinaryPath, fm.isExecutableFile(atPath: explicit) {
         return explicit
     }
+    // Check inside app bundle (for distributed .app)
+    if let bundlePath = Bundle.main.executableURL?
+        .deletingLastPathComponent()
+        .appendingPathComponent("ccoverage").path,
+       fm.isExecutableFile(atPath: bundlePath) {
+        return bundlePath
+    }
     if let pathEnv = ProcessInfo.processInfo.environment["PATH"] {
         for dir in pathEnv.split(separator: ":") {
             let candidate = "\(dir)/ccoverage"
