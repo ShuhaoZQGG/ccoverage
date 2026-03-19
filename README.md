@@ -154,12 +154,13 @@ ccoverage includes a companion macOS menubar app that displays your latest cover
 
 ### Install via DMG (recommended)
 
-**Requirements:** macOS 14 (Sonoma) or later, and the `ccoverage` CLI already in your PATH.
+**Requirements:** macOS 14 (Sonoma) or later.
 
-1. Install the CLI first (see [Quick Start](#quick-start) above)
-2. Download **CCoverage.dmg** from the [latest release](https://github.com/ShuhaoZQGG/ccoverage/releases/latest)
-3. Open the DMG and drag **CCoverage** to Applications
-4. Launch CCoverage from Applications
+1. Download **CCoverage.dmg** from the [latest release](https://github.com/ShuhaoZQGG/ccoverage/releases/latest)
+2. Open the DMG and drag **CCoverage** to Applications
+3. Launch CCoverage from Applications
+
+The DMG bundles the `ccoverage` CLI inside the app. No separate CLI install needed.
 
 The app is signed and notarized by Apple — no Gatekeeper warnings.
 
