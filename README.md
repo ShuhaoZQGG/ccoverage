@@ -150,21 +150,22 @@ ccoverage report --format md
 
 ## Menubar App
 
-ccoverage includes a companion macOS menubar app (in `menubar/`) built with Swift that displays your latest coverage summary at a glance.
+ccoverage includes a companion macOS menubar app that displays your latest coverage summary at a glance. It runs as a menubar-only app — it won't appear in the Dock, just in the menu bar.
 
-### Download (recommended)
+### Install via DMG (recommended)
 
-Download **CCoverage.dmg** from the [latest release](https://github.com/ShuhaoZQGG/ccoverage/releases/latest), open it, and drag CCoverage to Applications.
+**Requirements:** macOS 14 (Sonoma) or later, and the `ccoverage` CLI already in your PATH.
+
+1. Install the CLI first (see [Quick Start](#quick-start) above)
+2. Download **CCoverage.dmg** from the [latest release](https://github.com/ShuhaoZQGG/ccoverage/releases/latest)
+3. Open the DMG and drag **CCoverage** to Applications
+4. Launch CCoverage from Applications
 
 The app is signed and notarized by Apple — no Gatekeeper warnings.
 
-### Prerequisites
+### Build from Source
 
-- macOS 14 (Sonoma) or later
-- Swift 5.9+
-- `ccoverage` CLI binary in your PATH
-
-### Build & Run
+**Requirements:** macOS 14 (Sonoma) or later, Swift 5.9+, and the `ccoverage` CLI already in your PATH.
 
 ```sh
 cd menubar
@@ -174,8 +175,6 @@ swift build                # debug build
 # run the app
 .build/arm64-apple-macosx/debug/CCoverageMenuBar
 ```
-
-The app runs as a menubar-only app — it won't appear in the Dock, just in the menu bar.
 
 ## License
 
