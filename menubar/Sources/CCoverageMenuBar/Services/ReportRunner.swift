@@ -20,7 +20,7 @@ func resolveCCoverageBinaryPath(settings: AppSettings) -> String? {
     // Check inside app bundle (for distributed .app)
     if let bundlePath = Bundle.main.executableURL?
         .deletingLastPathComponent()
-        .appendingPathComponent("ccoverage").path,
+        .appendingPathComponent("ccoverage-cli").path,
        fm.isExecutableFile(atPath: bundlePath) {
         return bundlePath
     }

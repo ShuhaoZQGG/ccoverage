@@ -33,8 +33,8 @@ chmod +x "${MACOS}/${APP_NAME}"
 # Bundle CLI binary if available
 CLI_BINARY="${BUILD_DIR}/ccoverage"
 if [ -f "${CLI_BINARY}" ]; then
-    cp "${CLI_BINARY}" "${MACOS}/ccoverage"
-    chmod +x "${MACOS}/ccoverage"
+    cp "${CLI_BINARY}" "${MACOS}/ccoverage-cli"
+    chmod +x "${MACOS}/ccoverage-cli"
     echo "Bundled CLI binary"
 else
     echo "Warning: CLI binary not found at ${CLI_BINARY}, skipping"

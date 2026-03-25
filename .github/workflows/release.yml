@@ -150,7 +150,7 @@ jobs:
           codesign --force --options runtime --timestamp \
             --sign "$DEVELOPER_ID" \
             --entitlements menubar/Release/Entitlements.plist \
-            build/CCoverage.app/Contents/MacOS/ccoverage
+            build/CCoverage.app/Contents/MacOS/ccoverage-cli
           codesign --force --options runtime --timestamp \
             --sign "$DEVELOPER_ID" \
             --entitlements menubar/Release/Entitlements.plist \
